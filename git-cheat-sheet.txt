@@ -1,0 +1,6 @@
+init: Creates a new repository
+add: Stages changes for saving
+commit: Saves the changes to history
+log: Shows the history of changes
+show: Shows details of a specific commit
+checkout: Switches branches or undoes changes

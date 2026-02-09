@@ -1,7 +1,7 @@
 # Software Development Group Design Project - Worksheet 2
 
 **Student ID:** 20654922  
-**Name:** xuankaimichelezhang  
+**Name:** Xuankai Zhang  
 
 ## Project Overview
 This directory contains the collaborative software development exercises for Worksheet 2. It demonstrates the use of Git for version control, including branching, merging, conflict resolution, and remote repository management.

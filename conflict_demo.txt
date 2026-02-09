@@ -1,0 +1,2 @@
+This is a file to demonstrate git conflicts.
+Content modified by DEVEL2 branch.

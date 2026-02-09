@@ -2,11 +2,16 @@ cmake_minimum_required(VERSION 3.23)
 
 project(Worksheet4)
 
+# Set common flags
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Add the maths library subdirectory
 add_subdirectory(maths)
 
-# Create the calc executable
-add_executable(calc calc.cpp)
+# Calculator Executable
+add_executable(calc_cmake calc.cpp)
+target_link_libraries(calc_cmake PRIVATE maths)
 
-# Link the maths library
-target_link_libraries(calc PRIVATE maths)
+# Hello World Executable
+add_executable(hello_cmake hello.cpp)

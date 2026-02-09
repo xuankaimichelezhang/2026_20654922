@@ -1,3 +1,14 @@
+# MSVC / Visual Studio
+.vs/
+*.ipch
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeSettings.json
+build/
+
+# Compiled outputs
 *.com
 *.class
 *.dll
@@ -5,7 +16,6 @@
 *.o
 *.obj
 *.so
-build/
 *.pdb
 *.ilk
 *.exp

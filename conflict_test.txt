@@ -1,2 +1,6 @@
 This file will show a conflict between branches.
+<<<<<<< HEAD
 Current line: Devel Version
+=======
+Current line: Devel2 Version
+>>>>>>> devel2

@@ -26,11 +26,6 @@ var NAVTREE =
 [
   [ "Worksheet 5", "index.html", [
     [ "Files", "files.html", [
-      [ "Tasks Completed", "index.html#autotoc_md0", null ],
-      [ "How to use", "index.html#autotoc_md1", [
-        [ "Documentation", "index.html#autotoc_md2", null ],
-        [ "Building and Packaging", "index.html#autotoc_md3", null ]
-      ] ],
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],

@@ -23,3 +23,7 @@ build/
 
 # IDE
 .vscode/
+
+# Doxygen
+**/html/
+**/latex/

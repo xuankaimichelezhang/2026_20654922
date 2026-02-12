@@ -3,7 +3,7 @@
 #include "adder.h"
 
 int main( int argc , char *argv[] ) {
-    int a, b, c;
+    int a, b, d;
 
     if( argc != 3 ) return 1 ;
 
@@ -16,8 +16,8 @@ int main( int argc , char *argv[] ) {
     ssa >> a ;
     ssb >> b ;
 
-    c = add( a , b );
-    std::cout << c ;
+    d = add( a , b );
+    std::cout << d ;
 
     return 0 ;
 }

@@ -1,0 +1,21 @@
+# Build directories
+build/
+
+# Release directories (generated artifacts)
+*_release/
+
+# Binary files
+*.exe
+*.dll
+*.lib
+*.obj
+*.o
+*.a
+*.so
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+
+# PDF worksheets
+*.pdf

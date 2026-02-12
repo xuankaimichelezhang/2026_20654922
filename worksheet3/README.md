@@ -1,6 +1,0 @@
-﻿# Worksheet 3 - Software Development
-
-- Basic compilation and linking.
-- Multiple source files (`calc.cpp`, `adder.cpp`).
-- Environment setup for MSVC.
-

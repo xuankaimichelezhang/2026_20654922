@@ -17,6 +17,11 @@ _deps
 ### CMake Patch ###
 CMakeUserPresets.json
 
+# Custom build directories
+dynamic_release/
+static_release/
+build/
+
 # External projects
 *-prefix/
 

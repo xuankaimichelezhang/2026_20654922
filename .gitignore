@@ -7,6 +7,9 @@ CMakeCache.txt
 CMakeFiles/
 CMakeSettings.json
 build/
+build_test/
+static_release/
+dynamic_release/
 
 # Compiled outputs
 *.com
@@ -23,6 +26,7 @@ build/
 
 # IDE
 .vscode/
+*.user
 
 # Doxygen
 **/html/

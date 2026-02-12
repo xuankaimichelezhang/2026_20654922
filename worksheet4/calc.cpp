@@ -2,26 +2,21 @@
 #include <iostream>
 #include <sstream>
 
-
 int main(int argc, char *argv[]) {
-  int a, b, c;
+  int a, b;
 
-  if (argc != 3) {
-    a = 10;
-    b = 20;
-  } else {
-    std::string sa(argv[1]);
-    std::string sb(argv[2]);
-
-    std::stringstream ssa(sa);
-    std::stringstream ssb(sb);
-
+  if (argc == 3) {
+    std::stringstream ssa(argv[1]);
+    std::stringstream ssb(argv[2]);
     ssa >> a;
     ssb >> b;
+  } else {
+    // If arguments are not provided, allow user to input them
+    std::cin >> a >> b;
   }
 
-  c = add(a, b);
-  std::cout << c;
+  int c = add(a, b);
+  std::cout << c << std::endl;
 
   return 0;
 }

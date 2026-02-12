@@ -1,33 +1,37 @@
-cmake_minimum_required(VERSION 3.23)
-project(Worksheet4)
+cmake_minimum_required(VERSION 3.10)
+project(Worksheet4 VERSION 1.0 LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Output all binaries to the same directory (bin) to avoid DLL issues on Windows
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-# Add the maths library subdirectory
+# Add subdirectory for the library
 add_subdirectory(maths)
 
-# Executables
-add_executable(calc_static calc.cpp)
-target_link_libraries(calc_static PRIVATE maths_static)
-
-add_executable(calc_dynamic calc.cpp)
-target_link_libraries(calc_dynamic PRIVATE maths_shared)
-
+# Create the Hello World executable
 add_executable(hello hello.cpp)
 
-# Installation - Static Component
-install(TARGETS calc_static hello
-    RUNTIME DESTINATION bin
-    COMPONENT Static)
+# Create the Static Calculator
+add_executable(calc_static calc.cpp)
+target_link_libraries(calc_static PUBLIC maths_static)
 
-# Installation - Dynamic Component
+# Create the Dynamic Calculator
+add_executable(calc_dynamic calc.cpp)
+target_link_libraries(calc_dynamic PUBLIC maths_shared)
+
+# Installation rules for the executables to match the README instructions
+install(TARGETS calc_static
+    RUNTIME DESTINATION bin
+    COMPONENT Static
+)
+
 install(TARGETS calc_dynamic
     RUNTIME DESTINATION bin
-    COMPONENT Dynamic)
+    COMPONENT Dynamic
+)
+
+install(TARGETS hello
+    RUNTIME DESTINATION bin
+    # No component specified, or could be both? 
+    # Usually 'Unspecified' component.
+)

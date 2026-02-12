@@ -1,22 +1,23 @@
-#include "adder.h"
-#include <iostream>
 #include <sstream>
+#include <iostream>
+#include "adder.h"
 
-int main(int argc, char *argv[]) {
-  int a, b;
+int main( int argc , char *argv[] ) {
+    int a, b, c;
 
-  if (argc == 3) {
-    std::stringstream ssa(argv[1]);
-    std::stringstream ssb(argv[2]);
-    ssa >> a;
-    ssb >> b;
-  } else {
-    // If arguments are not provided, allow user to input them
-    std::cin >> a >> b;
-  }
+    if( argc != 3 ) return 1 ;
 
-  int c = add(a, b);
-  std::cout << c << std::endl;
+    std::string sa( argv[ 1 ] ) ;
+    std::string sb( argv[ 2 ] ) ;
 
-  return 0;
+    std::stringstream ssa( sa ) ;
+    std::stringstream ssb( sb ) ;
+
+    ssa >> a ;
+    ssb >> b ;
+
+    c = add( a , b );
+    std::cout << c ;
+
+    return 0 ;
 }

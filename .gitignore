@@ -8,21 +8,15 @@ CMakeFiles/
 CMakeSettings.json
 build/
 build_test/
-static_release/
-dynamic_release/
 
-# Compiled outputs
+# Compiled outputs (Global ignores)
 *.com
 *.class
-*.dll
-*.exe
 *.o
 *.obj
-*.so
 *.pdb
 *.ilk
 *.exp
-*.lib
 
 # IDE
 .vscode/

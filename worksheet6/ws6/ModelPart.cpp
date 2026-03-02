@@ -8,6 +8,7 @@
  */
 
 #include "ModelPart.h"
+#include <QFileInfo>
 
 /* Commented out for now, will be uncommented later when you have
  * installed the VTK library
@@ -114,8 +115,9 @@ void ModelPart::setVisible(bool isVisible) {
 bool ModelPart::visible() { return isVisible; }
 
 void ModelPart::loadSTL(QString fileName) {
-  /* This is a placeholder function that you will need to modify if you want to
-   * use it */
+  m_stlPath = fileName;
+  QFileInfo fileInfo(fileName);
+  set(0, fileInfo.fileName());
 
   /* 1. Use the vtkSTLReader class to load the STL file
    *     https://vtk.org/doc/nightly/html/classvtkSTLReader.html

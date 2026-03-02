@@ -55,6 +55,17 @@ QVariant ModelPartList::data(const QModelIndex &index, int role) const {
   return QVariant();
 }
 
+bool ModelPartList::setData(const QModelIndex &index, const QVariant &value,
+                            int role) {
+  if (role != Qt::EditRole && role != Qt::DisplayRole)
+    return false;
+
+  ModelPart *item = static_cast<ModelPart *>(index.internalPointer());
+  item->set(index.column(), value);
+  emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
+  return true;
+}
+
 Qt::ItemFlags ModelPartList::flags(const QModelIndex &index) const {
   if (!index.isValid())
     return Qt::NoItemFlags;

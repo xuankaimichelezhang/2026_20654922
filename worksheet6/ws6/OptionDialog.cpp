@@ -1,5 +1,6 @@
 #include "OptionDialog.h"
 #include "ui_OptionDialog.h"
+#include <QFileInfo>
 
 OptionDialog::OptionDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::OptionDialog) {
@@ -46,5 +47,7 @@ void OptionDialog::on_browseButton_clicked() {
 
   if (!fileName.isEmpty()) {
     ui->stlLineEdit->setText(fileName);
+    QFileInfo fileInfo(fileName);
+    ui->nameLineEdit->setText(fileInfo.baseName());
   }
 }

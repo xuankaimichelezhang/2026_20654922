@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "OptionDialog.h"
 #include "ui_mainwindow.h"
+#include <QDir>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -95,14 +97,13 @@ void MainWindow::handleButton2() {
 
   /* Show the dialog */
   if (dialog.exec() == QDialog::Accepted) {
-    /* Update the item data */
-    selectedPart->set(0, dialog.getName());
-    selectedPart->set(1, dialog.getVisible() ? "Yes" : "No");
+    /* Update the item data through the model to ensure view updates */
+    partList->setData(index, dialog.getName(), Qt::EditRole);
+    partList->setData(index.siblingAtColumn(1),
+                      dialog.getVisible() ? "Yes" : "No", Qt::EditRole);
+
     selectedPart->setStlPath(dialog.getStlPath());
     selectedPart->setColour(dialog.getR(), dialog.getG(), dialog.getB());
-
-    /* Notify the model that the data has changed to update the view */
-    emit partList->dataChanged(index, index);
 
     emit statusUpdateMessage(QString("Updated item: ") + dialog.getName(), 0);
   }
@@ -123,12 +124,39 @@ void MainWindow::handleTreeClicked() {
 }
 
 void MainWindow::on_actionOpen_File_triggered() {
+  /* Get the index of the selected item */
+  QModelIndex index = ui->treeView->currentIndex();
+
+  /* If the index isn't valid, nothing is selected */
+  if (!index.isValid()) {
+    QMessageBox::warning(this, "No Selection",
+                         "Please select an item in the tree view first.");
+    return;
+  }
+
+  /* Get a pointer to the item from the index */
+  ModelPart *selectedPart = static_cast<ModelPart *>(index.internalPointer());
+
   QString fileName =
-      QFileDialog::getOpenFileName(this, tr("Open File"), "C:\\",
+      QFileDialog::getOpenFileName(this, tr("Open File"), QDir::currentPath(),
                                    tr("STL Files (*.stl);;Text Files (*.txt)"));
 
   if (!fileName.isEmpty()) {
-    emit statusUpdateMessage(QString("The selected file is: ") + fileName, 0);
+    /* Load the STL file - this updates internal path */
+    selectedPart->loadSTL(fileName);
+
+    /* Update the item name property in the model to reflect the filename
+     * selected This will trigger the view to update via the dataChanged signal
+     * inside setData */
+    QFileInfo fileInfo(fileName);
+    partList->setData(index.siblingAtColumn(0), fileInfo.fileName(),
+                      Qt::EditRole);
+
+    emit statusUpdateMessage(QString("Opened file: ") + fileInfo.fileName() +
+                                 " and updated item name",
+                             0);
+  } else {
+    emit statusUpdateMessage(QString("Open file cancelled"), 0);
   }
 }
 

@@ -1,34 +1,46 @@
-# Build artifacts
-build/
-Debug/
-Release/
-x64/
-out/
-CMakeFiles/
-ws6_autogen/
-*.dir/
-*.log
-*.stamp
-*.tlog
-*.idb
-*.pdb
-*.obj
-*.exe
-*.dll
-*.lib
+# Gitignore for Qt and Visual Studio Projects
+# Worksheet 6
+
+# Build artifacts (recursive covers any subfolder)
+**/build/
+**/Debug/
+**/Release/
+**/RelWithDebInfo/
+**/x64/
+**/out/
+**/CMakeFiles/
+**/ws6_autogen/
+**/*.dir/
+**/*.log
+**/*.stamp
+**/*.tlog
+**/*.idb
+**/*.pdb
+**/*.obj
+**/*.exe
+**/*.dll
+**/*.lib
 
 # Visual Studio / QtCreator Junk
-.vs/
-.qt/
-.qtcreator/
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.user
-*.sln
-*.slnx
-*.autosave
-CMakeCache.txt
-cmake_install.cmake
+**/.vs/
+**/.qt/
+**/.qtcreator/
+**/*.vcxproj
+**/*.vcxproj.filters
+**/*.vcxproj.user
+**/*.sln
+**/*.slnx
+**/*.autosave
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/CMakeSettings.json
+
+# User specific project settings
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 
 # Worksheet artifacts
+# (Ignoring the PDF in the repo to keep it small)
 Worksheet6_v1.pdf

@@ -6,7 +6,7 @@
   *
   *     P Evans 2022
   */
-  
+
 #ifndef VIEWER_MODELPARTLIST_H
 #define VIEWER_MODELPARTLIST_H
 
@@ -42,7 +42,7 @@ public:
       */
     int columnCount( const QModelIndex& parent ) const;
 
-    /** This returns the value of a particular row (i.e. the item index) and 
+    /** This returns the value of a particular row (i.e. the item index) and
       *  columns (i.e. either the "Part" or "Visible" property).
       *  It is used by QT internally - this is how Qt retrieves the text to display in the TreeView
       * @param index in a stucture Qt uses to specify the row and column it wants data for
@@ -64,8 +64,8 @@ public:
 
 
     /** Get a valid QModelIndex for a location in the tree (row is the row in the tree under "parent"
-      * or under the root of the tree if parent isnt specified. Column is either 0 = "Part" or 1 = "Visible" 
-      * in this example 
+      * or under the root of the tree if parent isnt specified. Column is either 0 = "Part" or 1 = "Visible"
+      * in this example
       * @param row is the item index
       * @param column is 0 or 1 - part name or visible stringstream
       * @param parent where the row is referenced from, usually the tree root
@@ -100,4 +100,3 @@ private:
     ModelPart *rootItem;    /**< This is a pointer to the item at the base of the tree */
 };
 #endif
-

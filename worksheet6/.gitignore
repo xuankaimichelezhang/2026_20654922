@@ -1,0 +1,34 @@
+# Build artifacts
+build/
+Debug/
+Release/
+x64/
+out/
+CMakeFiles/
+ws6_autogen/
+*.dir/
+*.log
+*.stamp
+*.tlog
+*.idb
+*.pdb
+*.obj
+*.exe
+*.dll
+*.lib
+
+# Visual Studio / QtCreator Junk
+.vs/
+.qt/
+.qtcreator/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.slnx
+*.autosave
+CMakeCache.txt
+cmake_install.cmake
+
+# Worksheet artifacts
+Worksheet6_v1.pdf

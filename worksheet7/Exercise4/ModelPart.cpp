@@ -8,7 +8,9 @@
  */
 
 #include "ModelPart.h"
+#include <QDebug>
 #include <QFileInfo>
+
 
 #include <vtkActor.h>
 #include <vtkPolyDataMapper.h>
@@ -20,7 +22,10 @@ ModelPart::ModelPart(const QList<QVariant> &data, ModelPart *parent)
     : m_itemData(data), m_parentItem(parent), isVisible(true), m_stlPath(""),
       m_R(255), m_G(255), m_B(255) {
 
-  /* You probably want to give the item a default colour */
+  /* Synchronise internal flags with the data provided */
+  for (int i = 0; i < m_itemData.size(); ++i) {
+    set(i, m_itemData.at(i));
+  }
 }
 
 ModelPart::~ModelPart() { qDeleteAll(m_childItems); }
@@ -115,8 +120,13 @@ void ModelPart::setVisible(bool isVisible) {
 bool ModelPart::visible() { return isVisible; }
 
 void ModelPart::loadSTL(QString fileName) {
-  m_stlPath = fileName;
   QFileInfo fileInfo(fileName);
+  if (!fileInfo.exists()) {
+    qWarning() << "File does not exist:" << fileName;
+    return;
+  }
+
+  m_stlPath = fileName;
   set(0, fileInfo.fileName());
 
   /* 1. Use the vtkSTLReader class to load the STL file */
@@ -136,11 +146,13 @@ void ModelPart::loadSTL(QString fileName) {
   actor->SetMapper(mapper);
   actor->GetProperty()->SetColor(m_R / 255.0, m_G / 255.0, m_B / 255.0);
   actor->SetVisibility(isVisible);
+
+  qDebug() << "Successfully loaded STL:" << fileName;
 }
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() { return actor; }
 
-vtkActor *ModelPart::getNewActor() {
+vtkSmartPointer<vtkActor> ModelPart::getNewActor() {
   /* 1. Create new mapper */
   vtkSmartPointer<vtkPolyDataMapper> newMapper =
       vtkSmartPointer<vtkPolyDataMapper>::New();

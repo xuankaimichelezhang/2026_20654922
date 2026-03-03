@@ -40,5 +40,8 @@ private:
   vtkSmartPointer<vtkRenderer> renderer;
   vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
   QVTKOpenGLNativeWidget *vtkWidget;
+
+  void updateRender();
+  void updateRenderFromTree(const QModelIndex &index);
 };
 #endif // MAINWINDOW_H

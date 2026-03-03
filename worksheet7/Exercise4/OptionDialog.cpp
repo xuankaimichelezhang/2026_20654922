@@ -43,7 +43,7 @@ void OptionDialog::setStlPath(const QString &path) {
 
 void OptionDialog::on_browseButton_clicked() {
   QString fileName = QFileDialog::getOpenFileName(
-      this, tr("Open STL File"), "C:\\", tr("STL Files (*.stl)"));
+      this, tr("Open STL File"), QDir::currentPath(), tr("STL Files (*.stl)"));
 
   if (!fileName.isEmpty()) {
     ui->stlLineEdit->setText(fileName);

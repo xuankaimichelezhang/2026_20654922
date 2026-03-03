@@ -76,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent)
   }
   ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
   ui->treeView->addAction(ui->actionItem_Options);
+
+  updateRender();
 }
 
 MainWindow::~MainWindow() {
@@ -121,7 +123,7 @@ void MainWindow::handleButton2() {
     selectedPart->setColour(dialog.getR(), dialog.getG(), dialog.getB());
     selectedPart->setVisible(dialog.getVisible());
 
-    renderWindow->Render();
+    updateRender();
 
     emit statusUpdateMessage(QString("Updated item: ") + dialog.getName(), 0);
   }
@@ -145,43 +147,58 @@ void MainWindow::on_actionOpen_File_triggered() {
   /* Get the index of the selected item */
   QModelIndex index = ui->treeView->currentIndex();
 
-  /* If the index isn't valid, nothing is selected */
-  if (!index.isValid()) {
-    QMessageBox::warning(this, "No Selection",
-                         "Please select an item in the tree view first.");
-    return;
-  }
-
-  /* Get a pointer to the item from the index */
-  ModelPart *selectedPart = static_cast<ModelPart *>(index.internalPointer());
-
-  QString fileName =
-      QFileDialog::getOpenFileName(this, tr("Open File"), QDir::currentPath(),
-                                   tr("STL Files (*.stl);;Text Files (*.txt)"));
+  QString fileName = QFileDialog::getOpenFileName(
+      this, tr("Open File"), QDir::currentPath(), tr("STL Files (*.stl)"));
 
   if (!fileName.isEmpty()) {
-    /* Load the STL file - this updates internal path */
-    selectedPart->loadSTL(fileName);
+    /* Create a new child item instead of reusing the selected one */
+    QList<QVariant> data = {tr("New Part"), tr("Yes")};
+    QModelIndex newIndex = partList->appendChild(index, data);
 
-    /* Add the actor to the renderer */
-    if (selectedPart->getActor()) {
-      renderer->AddActor(selectedPart->getActor());
-      renderer->ResetCamera();
-      renderWindow->Render();
-    }
+    /* Get a pointer to the new item */
+    ModelPart *newPart = static_cast<ModelPart *>(newIndex.internalPointer());
+
+    /* Load the STL file */
+    newPart->loadSTL(fileName);
 
     /* Update the item name property in the model to reflect the filename
-     * selected This will trigger the view to update via the dataChanged signal
-     * inside setData */
+     * selected */
     QFileInfo fileInfo(fileName);
-    partList->setData(index.siblingAtColumn(0), fileInfo.fileName(),
+    partList->setData(newIndex.siblingAtColumn(0), fileInfo.fileName(),
                       Qt::EditRole);
 
-    emit statusUpdateMessage(QString("Opened file: ") + fileInfo.fileName() +
-                                 " and updated item name",
-                             0);
+    /* Select the new item */
+    ui->treeView->setCurrentIndex(newIndex);
+    ui->treeView->expand(index); // Ensure parent is expanded
+
+    updateRender();
+    renderer->ResetCamera();
+    renderWindow->Render();
+
+    emit statusUpdateMessage(QString("Opened file: ") + fileInfo.fileName(), 0);
   } else {
     emit statusUpdateMessage(QString("Open file cancelled"), 0);
+  }
+}
+
+void MainWindow::updateRender() {
+  renderer->RemoveAllViewProps();
+  updateRenderFromTree(QModelIndex());
+  renderWindow->Render();
+}
+
+void MainWindow::updateRenderFromTree(const QModelIndex &index) {
+  if (index.isValid()) {
+    ModelPart *selectedPart = static_cast<ModelPart *>(index.internalPointer());
+    if (selectedPart && selectedPart->getActor()) {
+      renderer->AddActor(selectedPart->getActor());
+    }
+  }
+
+  /* Loop through all children of this index */
+  int rows = partList->rowCount(index);
+  for (int i = 0; i < rows; i++) {
+    updateRenderFromTree(partList->index(i, 0, index));
   }
 }
 

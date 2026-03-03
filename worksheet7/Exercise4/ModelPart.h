@@ -126,7 +126,7 @@ public:
    * @return pointer to default actor for GUI rendering
    */
   vtkSmartPointer<vtkActor> getActor();
-  vtkActor *getNewActor();
+  vtkSmartPointer<vtkActor> getNewActor();
 
 private:
   QList<ModelPart *> m_childItems; /**< List (array) of child items */

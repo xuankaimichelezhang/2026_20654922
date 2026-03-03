@@ -133,7 +133,7 @@ QModelIndex ModelPartList::appendChild(QModelIndex &parent,
     parentPart = static_cast<ModelPart *>(parent.internalPointer());
   else {
     parentPart = rootItem;
-    parent = createIndex(0, 0, rootItem);
+    parent = QModelIndex();
   }
 
   beginInsertRows(parent, rowCount(parent), rowCount(parent));
@@ -142,7 +142,7 @@ QModelIndex ModelPartList::appendChild(QModelIndex &parent,
 
   parentPart->appendChild(childPart);
 
-  QModelIndex child = createIndex(0, 0, childPart);
+  QModelIndex child = createIndex(parentPart->childCount() - 1, 0, childPart);
 
   endInsertRows();
 

@@ -20,8 +20,8 @@
       <widget class="QWidget" name="buttonWidget">
        <property name="geometry">
         <rect>
-         <x>9</x>
-         <y>9</y>
+         <x>10</x>
+         <y>10</y>
          <width>79</width>
          <height>192</height>
         </rect>

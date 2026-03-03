@@ -21,7 +21,10 @@ ModelPart::ModelPart(const QList<QVariant> &data, ModelPart *parent)
     : m_itemData(data), m_parentItem(parent), isVisible(true), m_stlPath(""),
       m_R(255), m_G(255), m_B(255) {
 
-  /* You probably want to give the item a default colour */
+  /* Synchronise internal flags with the data provided */
+  for (int i = 0; i < m_itemData.size(); ++i) {
+    set(i, m_itemData.at(i));
+  }
 }
 
 ModelPart::~ModelPart() { qDeleteAll(m_childItems); }

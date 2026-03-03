@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include "OptionDialog.h"
 #include "ui_mainwindow.h"
+#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+
 
 #include <QVTKOpenGLNativeWidget.h>
 #include <vtkActor.h>
@@ -81,37 +83,14 @@ MainWindow::MainWindow(QWidget *parent)
   renderer = vtkSmartPointer<vtkRenderer>::New();
   renderWindow->AddRenderer(renderer);
 
-  /* Create an object and add to renderer (this will change later to display a
-   * CAD model) */
-  /* Will just copy and paste cylinder example from before */
-  // This creates a polygonal cylinder model with eight circumferential facets
-  // (i.e, in practice an octagonal prism).
-  vtkNew<vtkCylinderSource> cylinder;
-  cylinder->SetResolution(8);
-
-  // The mapper is responsible for pushing the geometry into the graphics
-  // library. It may also do color mapping, if scalars or other attributes are
-  // defined.
-  vtkNew<vtkPolyDataMapper> cylinderMapper;
-  cylinderMapper->SetInputConnection(cylinder->GetOutputPort());
-
-  // The actor is a grouping mechanism: besides the geometry (mapper), it
-  // also has a property, transformation matrix, and/or texture map.
-  // Here we set its color and rotate it around the X and Y axes.
-  vtkNew<vtkActor> cylinderActor;
-  cylinderActor->SetMapper(cylinderMapper);
-  cylinderActor->GetProperty()->SetColor(1.0, 0.0, 0.35);
-  cylinderActor->RotateX(30.0);
-  cylinderActor->RotateY(-45.0);
-
-  renderer->AddActor(cylinderActor);
-
   /* Reset Camera (probably needs to go in its own function that is called
    * whenever model is changed) */
   renderer->ResetCamera();
   renderer->GetActiveCamera()->Azimuth(30);
   renderer->GetActiveCamera()->Elevation(30);
   renderer->ResetCameraClippingRange();
+
+  updateRender();
 }
 
 MainWindow::~MainWindow() {
@@ -153,6 +132,9 @@ void MainWindow::handleButton2() {
     partList->setData(index.siblingAtColumn(1),
                       dialog.getVisible() ? "Yes" : "No", Qt::EditRole);
 
+    /* Check if the STL path changed BEFORE setting it */
+    bool pathChanged = (selectedPart->getStlPath() != dialog.getStlPath());
+
     selectedPart->setStlPath(dialog.getStlPath());
     selectedPart->setColour(dialog.getR(), dialog.getG(), dialog.getB());
     selectedPart->setVisible(dialog.getVisible());
@@ -163,7 +145,12 @@ void MainWindow::handleButton2() {
       selectedPart->getActor()->SetVisibility(dialog.getVisible());
     }
 
-    renderWindow->Render();
+    /* If the STL path changed, reload it */
+    if (pathChanged && !dialog.getStlPath().isEmpty()) {
+      selectedPart->loadSTL(dialog.getStlPath());
+    }
+
+    updateRender();
 
     emit statusUpdateMessage(QString("Updated item: ") + dialog.getName(), 0);
   }
@@ -187,43 +174,67 @@ void MainWindow::on_actionOpen_File_triggered() {
   /* Get the index of the selected item */
   QModelIndex index = ui->treeView->currentIndex();
 
-  /* If the index isn't valid, nothing is selected */
-  if (!index.isValid()) {
-    QMessageBox::warning(this, "No Selection",
-                         "Please select an item in the tree view first.");
-    return;
-  }
-
-  /* Get a pointer to the item from the index */
-  ModelPart *selectedPart = static_cast<ModelPart *>(index.internalPointer());
-
-  QString fileName =
-      QFileDialog::getOpenFileName(this, tr("Open File"), QDir::currentPath(),
-                                   tr("STL Files (*.stl);;Text Files (*.txt)"));
+  QString fileName = QFileDialog::getOpenFileName(
+      this, tr("Open File"), QDir::currentPath(), tr("STL Files (*.stl)"));
 
   if (!fileName.isEmpty()) {
-    /* Load the STL file - this updates internal path */
-    selectedPart->loadSTL(fileName);
+    qDebug() << "Selected file:" << fileName;
 
-    if (selectedPart->getActor()) {
-      renderer->AddActor(selectedPart->getActor());
+    /* Create a new child item instead of reusing the selected one */
+    QList<QVariant> data = {tr("New Part"), tr("Yes")};
+    QModelIndex newIndex = partList->appendChild(index, data);
+
+    if (!newIndex.isValid()) {
+      qWarning() << "Failed to create new item in tree view";
+      return;
     }
 
+    /* Get a pointer to the new item */
+    ModelPart *newPart = static_cast<ModelPart *>(newIndex.internalPointer());
+
+    /* Load the STL file */
+    newPart->loadSTL(fileName);
+
     /* Update the item name property in the model to reflect the filename
-     * selected This will trigger the view to update via the dataChanged signal
-     * inside setData */
+     * selected */
     QFileInfo fileInfo(fileName);
-    partList->setData(index.siblingAtColumn(0), fileInfo.fileName(),
+    partList->setData(newIndex.siblingAtColumn(0), fileInfo.fileName(),
                       Qt::EditRole);
 
+    /* Select the new item */
+    ui->treeView->setCurrentIndex(newIndex);
+    ui->treeView->expand(index); // Ensure parent is expanded
+
+    updateRender();
     renderer->ResetCamera();
     renderWindow->Render();
 
-    emit statusUpdateMessage(QString("Opened file: ") + fileInfo.fileName() +
-                                 " and updated item name",
-                             0);
+    qDebug() << "Updated render and camera for:" << fileInfo.fileName();
+    emit statusUpdateMessage(QString("Opened file: ") + fileInfo.fileName(), 0);
   } else {
+    qDebug() << "Open file cancelled by user";
     emit statusUpdateMessage(QString("Open file cancelled"), 0);
+  }
+}
+
+void MainWindow::updateRender() {
+  renderer->RemoveAllViewProps();
+  updateRenderFromTree(QModelIndex());
+  renderWindow->Render();
+}
+
+void MainWindow::updateRenderFromTree(const QModelIndex &index) {
+  if (index.isValid()) {
+    ModelPart *selectedPart = static_cast<ModelPart *>(index.internalPointer());
+    if (selectedPart && selectedPart->getActor()) {
+      renderer->AddActor(selectedPart->getActor());
+    }
+  }
+
+  /* Loop through all children of this index */
+  int rows = partList->rowCount(index);
+  for (int i = 0; i < rows; i++) {
+    updateRenderFromTree(partList->index(i, 0, index));
   }
 }
 

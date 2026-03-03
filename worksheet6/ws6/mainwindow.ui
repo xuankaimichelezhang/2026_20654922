@@ -110,7 +110,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_File">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset>
      <normaloff>:/Icons/icons/fileopen.png</normaloff>:/Icons/icons/fileopen.png</iconset>
    </property>
    <property name="text">
@@ -123,8 +123,6 @@
    </property>
   </action>
  </widget>
- <resources>
-  <include location="icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
